@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eurovision 2026 Sweepstake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --transition-interactive: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+      --color-bg: #0b0b12;
+      --color-surface: rgba(255,255,255,0.06);
+      --color-surface-2: rgba(255,255,255,0.1);
+      --color-border: rgba(255,255,255,0.12);
+      --color-divider: rgba(255,255,255,0.08);
+      --color-text: #ffffff;
+      --color-text-muted: rgba(255,255,255,0.72);
+      --color-text-faint: rgba(255,255,255,0.48);
+      --color-text-inverse: #0b0b12;
+      --color-primary: #00a7ff;
+      --color-primary-hover: #39b8ff;
+      --color-accent: #ff004f;
+      --color-accent-2: #ff2e7a;
+      --color-heart-stroke: rgba(255,255,255,0.95);
+      --shadow-lg: 0 18px 40px rgba(0,0,0,0.35);
+      --font-display: 'Outfit', system-ui, sans-serif;
+      --font-body: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: none; text-size-adjust: none; scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      background:
+        radial-gradient(circle at top, rgba(255, 0, 95, 0.45), transparent 32%),
+        linear-gradient(180deg, #d10037 0%, #8a0028 38%, #28000d 100%);
+      overflow-x: hidden;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: clamp(var(--space-4), 3vw, var(--space-8));
+      display: grid;
+      place-items: center;
+    }
+
+    .board {
+      width: min(100%, 980px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid var(--color-border);
+      border-radius: 28px;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: clamp(var(--space-5), 4vw, var(--space-10));
+      border-bottom: 1px solid var(--color-divider);
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: var(--space-3);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.05;
+      margin-bottom: var(--space-3);
+    }
+
+    .intro {
+      max-width: 55ch;
+      margin: 0 auto;
+      color: var(--color-text-muted);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+      color: var(--color-text-faint);
+      font-size: var(--text-sm);
+    }
+
+    .legend span {
+      padding: 0.55rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .grid-wrap {
+      padding: clamp(var(--space-4), 4vw, var(--space-8));
+    }
+
+    .hearts-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: clamp(10px, 1.8vw, 18px);
+      align-items: stretch;
+    }
+
+    .heart-card {
+      position: relative;
+      aspect-ratio: 0.78 / 1;
+      perspective: 1200px;
+      min-height: 96px;
+    }
+
+    .heart-button {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), filter var(--transition-interactive);
+      border-radius: 20px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .heart-card.revealed .heart-button {
+      transform: rotateY(180deg);
+    }
+
+    .heart-face,
+    .entry-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .heart-face {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .heart-button:hover .heart-face,
+    .heart-button:focus-visible .heart-face {
+      background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.05));
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .entry-face {
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, rgba(0,167,255,0.2), rgba(255,0,79,0.22));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      text-align: center;
+    }
+
+    .heart-icon {
+      width: 72%;
+      max-width: 82px;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.18));
+      transition: transform var(--transition-interactive), filter var(--transition-interactive);
+    }
+
+    .heart-button:hover .heart-icon,
+    .heart-button:focus-visible .heart-icon {
+      transform: scale(1.04);
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,0.25));
+    }
+
+    .entry-content {
+      display: grid;
+      gap: 0.32rem;
+      align-content: center;
+    }
+
+    .country-row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+
+    .flag {
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: 999px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.65);
+    }
+
+    .country {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(0.88rem, 0.55rem + 0.9vw, 1.1rem);
+      line-height: 1.05;
+    }
+
+    .song {
+      font-size: clamp(0.7rem, 0.48rem + 0.55vw, 0.88rem);
+      color: rgba(255,255,255,0.94);
+      line-height: 1.2;
+    }
+
+    .artist {
+      font-size: clamp(0.68rem, 0.46rem + 0.45vw, 0.82rem);
+      color: rgba(255,255,255,0.7);
+      line-height: 1.2;
+    }
+
+    .status {
+      padding: 0 var(--space-8) var(--space-6);
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+
+    .status strong { color: var(--color-text); }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      padding: 0 var(--space-4) var(--space-8);
+    }
+
+    .reset-btn {
+      padding: 0.9rem 1.25rem;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.09);
+      color: var(--color-text);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 600;
+    }
+
+    .reset-btn:hover,
+    .reset-btn:focus-visible {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .heart-button:focus-visible,
+    .reset-btn:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 720px) {
+      .hearts-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .board { border-radius: 22px; }
+      .heart-face, .entry-face { border-radius: 16px; padding: 0.45rem; }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding: 12px; }
+      .header { padding: 1.1rem 1rem; }
+      .grid-wrap { padding: 0.9rem; }
+      .status { padding: 0 1rem 1rem; }
+      .controls { padding: 0 1rem 1.1rem; }
+      .heart-card { aspect-ratio: 0.78 / 1.02; }
+      .legend { gap: 0.45rem; }
+      .legend span { padding: 0.45rem 0.7rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .heart-button { transition: none; }
+      .heart-icon { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="board" aria-labelledby="page-title">
+      <header class="header">
+        <div class="eyebrow">Eurovision Song Contest 2026</div>
+        <h1 id="page-title">Sweepstake Draw Board</h1>
+        <p class="intro">Tap any heart to reveal its randomly assigned Eurovision 2026 entry. Each heart flips to show the country, song and artist.</p>
+        <div class="legend" aria-hidden="true">
+          <span>35 tickets</span>
+          <span>35 hearts</span>
+          <span>One reveal per heart</span>
+        </div>
+      </header>
+
+      <div class="grid-wrap">
+        <div class="hearts-grid" id="heartsGrid" aria-label="Eurovision sweepstake hearts"></div>
+      </div>
+
+      <p class="status" id="statusText"><strong>0</strong> of <strong>35</strong> hearts revealed.</p>
+
+      <div class="controls">
+        <button class="reset-btn" id="resetBoard" type="button">Reset all hearts</button>
+      </div>
+    </section>
+  </main>
+
+  <template id="heartTemplate">
+    <article class="heart-card">
+      <button class="heart-button" type="button" aria-expanded="false">
+        <span class="heart-face">
+          <svg class="heart-icon" viewBox="0 0 100 90" aria-hidden="true">
+            <defs>
+              <linearGradient id="heartFill" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#1ab8ff"></stop>
+                <stop offset="32%" stop-color="#ffffff"></stop>
+                <stop offset="68%" stop-color="#ffffff"></stop>
+                <stop offset="100%" stop-color="#ff1f67"></stop>
+              </linearGradient>
+            </defs>
+            <path d="M50 82C34 68 10 52 10 28C10 16 19 8 30 8C39 8 46 13 50 20C54 13 61 8 70 8C81 8 90 16 90 28C90 52 66 68 50 82Z" fill="url(#heartFill)" stroke="rgba(255,255,255,0.95)" stroke-width="5" stroke-linejoin="round"/>
+            <path d="M50 74C36 61 18 47 18 28.5C18 21.5 23 16 30 16C37 16 43 20.5 46.5 27.5L50 34L53.5 27.5C57 20.5 63 16 70 16C77 16 82 21.5 82 28.5C82 47 64 61 50 74Z" fill="rgba(255,255,255,0.15)"/>
+          </svg>
+        </span>
+        <span class="entry-face">
+          <span class="entry-content">
+            <span class="country-row">
+              <img class="flag" alt="" />
+              <span class="country"></span>
+            </span>
+            <span class="song"></span>
+            <span class="artist"></span>
+          </span>
+        </span>
+      </button>
+    </article>
+  </template>
+
+  <script>
+    // Official Vienna 2026 entries (country, song, artist)
+    const entries = [
+      { country: 'Albania',        song: 'Nân',               artist: 'Alis' },
+      { country: 'Armenia',        song: 'Paloma Rumba',      artist: 'SIMÓN' },
+      { country: 'Australia',      song: 'Eclipse',           artist: 'Delta Goodrem' },
+      { country: 'Austria',        song: 'Tanzschein',        artist: 'COSMÓ' },
+      { country: 'Azerbaijan',     song: 'Just Go',           artist: 'JIVA' },
+      { country: 'Belgium',        song: 'Dancing on the Ice',artist: 'ESSYLA' },
+      { country: 'Bulgaria',       song: 'Bangaranga',        artist: 'DARA' },
+      { country: 'Croatia',        song: 'Andromeda',         artist: 'LELEK' },
+      { country: 'Cyprus',         song: 'JALLA',             artist: 'Antigoni' },
+      { country: 'Czechia',        song: 'CROSSROADS',        artist: 'Daniel Zizka' },
+      { country: 'Denmark',        song: 'Før Vi Går Hjem',   artist: 'Søren Torpegaard Lund' },
+      { country: 'Estonia',        song: 'Too Epic To Be True', artist: 'Vanilla Ninja' },
+      { country: 'Finland',        song: 'Liekinheitin',      artist: 'Linda Lampenius x Pete Parkkonen' },
+      { country: 'France',         song: 'Regarde !',         artist: 'Monroe' },
+      { country: 'Georgia',        song: 'On Replay',         artist: 'Bzikebi' },
+      { country: 'Germany',        song: 'Fire',              artist: 'Sarah Engels' },
+      { country: 'Greece',         song: 'Ferto',             artist: 'Akylas' },
+      { country: 'Israel',         song: 'Michelle',          artist: 'Noam Bettan' },
+      { country: 'Italy',          song: 'Per Sempre Sì',     artist: 'Sal Da Vinci' },
+      { country: 'Latvia',         song: 'Ēnā',               artist: 'Atvara' },
+      { country: 'Lithuania',      song: 'Sólo Quiero Más',   artist: 'Lion Ceccah' },
+      { country: 'Luxembourg',     song: 'Mother Nature',     artist: 'Eva Marija' },
+      { country: 'Malta',          song: 'Bella',             artist: 'AIDAN' },
+      { country: 'Moldova',        song: 'Viva, Moldova!',    artist: 'Satoshi' },
+      { country: 'Montenegro',     song: 'Nova Zora',         artist: 'Tamara Živković' },
+      { country: 'Norway',         song: 'YA YA YA',          artist: 'JONAS LOVV' },
+      { country: 'Poland',         song: 'Pray',              artist: 'ALICJA' },
+      { country: 'Portugal',       song: 'Rosa',              artist: 'Bandidos do Cante' },
+      { country: 'Romania',        song: 'Choke Me',          artist: 'Alexandra Căpitănescu' },
+      { country: 'San Marino',     song: 'Superstar',         artist: 'SENHIT' },
+      { country: 'Serbia',         song: 'Kraj Mene',         artist: 'LAVINA' },
+      { country: 'Sweden',         song: 'My System',         artist: 'FELICIA' },
+      { country: 'Switzerland',    song: 'Alice',             artist: 'Veronica Fusaro' },
+      { country: 'Ukraine',        song: 'Ridnym',            artist: 'LELÉKA' },
+      { country: 'United Kingdom', song: 'Eins, Zwei, Drei',  artist: 'LOOK MUM NO COMPUTER' }
+    ];
+    // Based on current 2026 coverage of participants and songs. [web:3][web:8][web:41]
+
+    // Eurovision 2026 heart flag PNGs on Wikimedia (227px previews). [web:19][web:42][web:51][web:69]
+    const flagMap = {
+      'Albania':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Albania.svg/227px-Eurovision_2026_heart_-_Albania.svg.png',
+      'Armenia':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Armenia.svg/227px-Eurovision_2026_heart_-_Armenia.svg.png',
+      'Australia':      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Australia.svg/227px-Eurovision_2026_heart_-_Australia.svg.png',
+      'Austria':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Austria.svg/227px-Eurovision_2026_heart_-_Austria.svg.png',
+      'Azerbaijan':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Azerbaijan.svg/227px-Eurovision_2026_heart_-_Azerbaijan.svg.png',
+      'Belgium':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Belgium.svg/227px-Eurovision_2026_heart_-_Belgium.svg.png',
+      'Bulgaria':       'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Bulgaria.svg/227px-Eurovision_2026_heart_-_Bulgaria.svg.png',
+      'Croatia':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Croatia.svg/227px-Eurovision_2026_heart_-_Croatia.svg.png',
+      'Cyprus':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Cyprus.svg/227px-Eurovision_2026_heart_-_Cyprus.svg.png',
+      'Czechia':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Czechia.svg/227px-Eurovision_2026_heart_-_Czechia.svg.png',
+      'Denmark':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Denmark.svg/227px-Eurovision_2026_heart_-_Denmark.svg.png',
+      'Estonia':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Estonia.svg/227px-Eurovision_2026_heart_-_Estonia.svg.png',
+      'Finland':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Finland.svg/227px-Eurovision_2026_heart_-_Finland.svg.png',
+      'France':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_France.svg/227px-Eurovision_2026_heart_-_France.svg.png',
+      'Georgia':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Georgia.svg/227px-Eurovision_2026_heart_-_Georgia.svg.png',
+      'Germany':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Germany.svg/227px-Eurovision_2026_heart_-_Germany.svg.png',
+      'Greece':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Greece.svg/227px-Eurovision_2026_heart_-_Greece.svg.png',
+      'Israel':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Israel.svg/227px-Eurovision_2026_heart_-_Israel.svg.png',
+      'Italy':          'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Italy.svg/227px-Eurovision_2026_heart_-_Italy.svg.png',
+      'Latvia':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Latvia.svg/227px-Eurovision_2026_heart_-_Latvia.svg.png',
+      'Lithuania':      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Lithuania.svg/227px-Eurovision_2026_heart_-_Lithuania.svg.png',
+      'Luxembourg':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Luxembourg.svg/227px-Eurovision_2026_heart_-_Luxembourg.svg.png',
+      'Malta':          'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Malta.svg/227px-Eurovision_2026_heart_-_Malta.svg.png',
+      'Moldova':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Moldova.svg/227px-Eurovision_2026_heart_-_Moldova.svg.png',
+      'Montenegro':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Montenegro.svg/227px-Eurovision_2026_heart_-_Montenegro.svg.png',
+      'Norway':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Norway.svg/227px-Eurovision_2026_heart_-_Norway.svg.png',
+      'Poland':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Poland.svg/227px-Eurovision_2026_heart_-_Poland.svg.png',
+      'Portugal':       'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Portugal.svg/227px-Eurovision_2026_heart_-_Portugal.svg.png',
+      'Romania':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Romania.svg/227px-Eurovision_2026_heart_-_Romania.svg.png',
+      'San Marino':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_San_Marino.svg/227px-Eurovision_2026_heart_-_San_Marino.svg.png',
+      'Serbia':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Serbia.svg/227px-Eurovision_2026_heart_-_Serbia.svg.png',
+      'Sweden':         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Sweden.svg/227px-Eurovision_2026_heart_-_Sweden.svg.png',
+      'Switzerland':    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Switzerland.svg/227px-Eurovision_2026_heart_-_Switzerland.svg.png',
+      'Ukraine':        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_Ukraine.svg/227px-Eurovision_2026_heart_-_Ukraine.svg.png',
+      'United Kingdom': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Eurovision_2026_heart_-_United_Kingdom.svg/227px-Eurovision_2026_heart_-_United_Kingdom.svg.png'
+    };
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    const grid = document.getElementById('heartsGrid');
+    const template = document.getElementById('heartTemplate');
+    const statusText = document.getElementById('statusText');
+    const resetButton = document.getElementById('resetBoard');
+    let assignedEntries = shuffle(entries);
+
+    function renderBoard() {
+      grid.innerHTML = '';
+      assignedEntries.forEach((entry, index) => {
+        const node = template.content.cloneNode(true);
+        const card = node.querySelector('.heart-card');
+        const button = node.querySelector('.heart-button');
+
+        const countryEl = node.querySelector('.country');
+        countryEl.textContent = entry.country;
+
+        const flagImg = node.querySelector('.flag');
+        const flagUrl = flagMap[entry.country];
+        if (flagUrl) {
+          flagImg.src = flagUrl;
+        } else {
+          flagImg.style.display = 'none';
+        }
+
+        node.querySelector('.song').textContent = entry.song;
+        node.querySelector('.artist').textContent = entry.artist;
+
+        button.setAttribute('aria-label', `Reveal entry ${index + 1}`);
+        button.addEventListener('click', () => {
+          const revealed = card.classList.toggle('revealed');
+          button.setAttribute('aria-expanded', String(revealed));
+          updateStatus();
+        });
+        grid.appendChild(node);
+      });
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const revealed = document.querySelectorAll('.heart-card.revealed').length;
+      statusText.innerHTML = `<strong>${revealed}</strong> of <strong>${assignedEntries.length}</strong> hearts revealed.`;
+    }
+
+    resetButton.addEventListener('click', () => {
+      assignedEntries = shuffle(entries);
+      renderBoard();
+    });
+
+    renderBoard();
+  </script>
+</body>
+</html>
